@@ -8,8 +8,8 @@ from itertools import combinations
 
 def ArgumentParser():
     parser = argparse.ArgumentParser(
-        description='This is a init script for calculating Bray curtis distance of big data')
-    parser.add_argument("--input_profile",  help='input big profile', required=True)
+        description='Splice big data to specific number and combinie between any two')
+    parser.add_argument("--input_data",  help='input big data table', required=True)
     parser.add_argument("--out_tmp",default=os.getcwd(),help="Tempory profiles output directory")
     parser.add_argument("--n_split_samples",type=int,default=100,help="number of samples to be a files. ")
     args = parser.parse_args()
@@ -64,7 +64,7 @@ def main():
         os.mkdir(tmpdir)
     tmp_prefix = os.path.join(tmpdir,"tmp.")
     
-    in_fh = openFile(args.input_profile)
+    in_fh = openFile(args.input_data)
     len_split = math.ceil(args.n_split_samples/2)
 
     DataProcess(in_fh,len_split,tmp_prefix)

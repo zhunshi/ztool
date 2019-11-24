@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+import sys
+import os
+import argparse
+
+def ArgumentParser():
+    parser = argparse.ArgumentParser(
+        description='This is a toolkit for handy scripts')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("Splice_Combine2",  action="store_true")
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = ArgumentParser()
+    sub_args = sys.argv[2:]
+
+    if args.Splice_Combine2:
+        import Splice_Combine2 as cmd
+        cmd.main(sub_args)
+
+if __name__ == "__main__":
+    main()
