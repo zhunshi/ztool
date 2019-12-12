@@ -2,22 +2,28 @@
 import sys
 import os
 import argparse
+import importlib
 
 def ArgumentParser():
     parser = argparse.ArgumentParser(
         description='This is a toolkit for handy scripts')
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("Splice_Combine2",  action="store_true")
+    parser.add_argument("command",help="command")
+    
     args = parser.parse_args()
     return args
 
+
 def main():
     args = ArgumentParser()
-    sub_args = sys.argv[2:]
-
-    if args.Splice_Combine2:
-        import Splice_Combine2 as cmd
-        cmd.main(sub_args)
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv)<2 or sys.argv[1] in ["-h","--help"]:
+        sys.exit(main())
+    if sys.argv[1] == "list":
+        mod = "ListCommands"
+    else:
+        mod = sys.argv[1]
+    
+    locals()['my_module'] = __import__(mod)
+    sys.argv[0] = 'ztool '+ mod
+    sys.exit(my_module.main())
