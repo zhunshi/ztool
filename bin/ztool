@@ -25,5 +25,6 @@ if __name__ == "__main__":
         mod = sys.argv[1]
     
     locals()['my_module'] = __import__(mod)
-    sys.argv[0] = 'ztool '+ mod
+    #sys.argv[0] = 'ztool '+ mod
+    del sys.argv[0]
     sys.exit(my_module.main())
