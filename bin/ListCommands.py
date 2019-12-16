@@ -6,6 +6,7 @@ Current avariable commands:
 
 Checkmd5 :              correctness checking between two md5 files
 CombineDistanceMatrix : Combine distance tables (Big data distance)
+TaxaRichness :          Calculate taxa richness (eg. gene richness)
 RerunGeneral :          Re-submit scripts undone
 RerunPipeline :         Re-submit scripts undone (in cOMG pipeline)
 SpliceCombine :         Splice big data to specific number and combinie between any two
