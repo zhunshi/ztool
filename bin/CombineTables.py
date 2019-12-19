@@ -14,51 +14,61 @@ def ArgumentParser():
     from position arguments or a file list
     ''')
     parser.add_argument("Files",nargs="*",default=[],help="files to be combined")
-    parser.add_argument("--input_file_list","-i",  help='input files list')
+    parser.add_argument(
+        "--input_file_list","-i",  
+        help='''input files list 
+        names1\tfilePath1
+        or 
+        filePath2
+        ''')
+    parser.add_argument("--NumCol","-n",help="which column will be combined")
     parser.add_argument("--out","-o",help="out file name",required=True)
     args = parser.parse_args()
     return args
 
-def ReadPositionFiles(files):
-    out = defaultdict(dict)
-    for file in files:
-        with open(file,'r') as fh:
-            SampleNames = fh.readline().rstrip().split("\t")
-            for line in fh:
-                line = line.rstrip().split("\t")
-                rownames = line.pop(0)
-                for x,y in zip(line,SampleNames):
-                    out[rownames][y] = x
-    return out
-
-def ReadTables(file_name):
-    out = {}
+def ReadFiles(file_name,data,samples,SampleName=None,NumCol=None):
     with open(file_name,'r') as fh:
-        fh.readline()
+        headers = fh.readline().strip().split("\t")
+        if SampleName is None:
+            if NumCol is not None:
+                SampleName = headers[NumCol - 1]
+                samples.append(SampleName)
+            else:
+                SampleName = headers
+                samples += SampleName
+        else:
+            samples.append(SampleName)
         for line in fh:
-            line = line.rstrip().split("\t")
+            line = line.strip().split("\t")
             rownames = line.pop(0)
-            out[rownames] = line[1]
-    return out
+            if NumCol is not None:
+                line = line[NumCol - 1]
+            for x,y in zip(SampleName,line):
+                data[rownames][x] = y
 
-def ReadListFiles(file_name):
-    out = defaultdict(dict)
-    file_list = {}
+def ReadPositionFiles(files,data,samples,NumCol=None):
+    for file in files:
+        ReadFiles(file,data,samples,SampleName=None,NumCol=NumCol)
+
+def ReadFileList(file_name,data,samples,NumCol=None):
     with open(file_name,'r') as fh:
         for line in fh:
-            line = line.rstrip().split("\t")
-            file_list[line[0]] = ReadTables(line[1])
-    return out
+            line = line.strip().split("\t")
+            SampleName = None if len(line)==1 else line.pop(0)
+            ReadFiles(line[0],data,samples,SampleName,NumCol)
 
-def Output(data,file_name):
+def Output(data,samples,file_name):
     with open(file_name,'w') as fh:
-        SampleNames = list(fh.keys())
-        header = "\t".join(SampleNames)
+        rownames = sorted(data)
+        header = "\t".join(samples)
         fh.write(f"\t{header}\n")
-        for sample in data:
-            fh.write(f"{sample}")
-            for k in sorted(data[sample]):
-                fh.write(f"\t{data[sample][k]}")
+        for rowname in rownames:
+            fh.write(f"{rowname}")
+            for sample in samples:
+                if sample in data[rowname]:
+                    fh.write(f"\t{data[rowname][sample]}")
+                else:
+                    fh.write(f"\t0")
             fh.write(f"\n")
 
 def main():
@@ -67,21 +77,20 @@ def main():
     if len(args.Files)==0 and args.input_file_list is None:
         print("InputFileERROR:\n\tAt least one file should be provide")
         sys.exit()
+    if args.NumCol is not None:
+        args.NumCol = int(args.NumCol)
     # read files from position arguments
+    data = defaultdict(dict)
+    samples = []
     if len(args.Files)>0:
-        data_position = ReadPositionFiles(args.Files)
+        ReadPositionFiles(args.Files,data,samples,args.NumCol)
+    print(data)
     # read files from a file list
     if args.input_file_list is not None:
-        data_list = ReadListFiles(args.input_file_list)
-    # combine data
-    if data_position is not None and data_list is not None:
-        res = data_position.update(data_list)
-    elif data_position is not None:
-        res = data_position
-    elif data_list is not None:
-        res = data_list
-    # output
-    Output(res,args.out)
+        ReadFileList(args.input_file_list,data,samples,args.NumCol)
+
+    # output 
+    Output(data,samples,args.out)
 
 if __name__ == "__main__":
     main()
