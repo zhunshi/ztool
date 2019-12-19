@@ -2,10 +2,11 @@
 
 def ListCommands():
     commands = r'''
-Current avariable commands:
+Current available commands:
 
 Checkmd5 :              correctness checking between two md5 files
 CombineDistanceMatrix : Combine distance tables (Big data distance)
+CombineTables :         Combine any two or more files by rows
 TaxaRichness :          Calculate taxa richness (eg. gene richness)
 RerunGeneral :          Re-submit scripts undone
 RerunPipeline :         Re-submit scripts undone (in cOMG pipeline)

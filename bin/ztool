@@ -6,7 +6,15 @@ import importlib
 
 def ArgumentParser():
     parser = argparse.ArgumentParser(
-        description='This is a toolkit for handy scripts')
+        description='''
+        This is a toolkit for handy scripts
+        
+        Base usage:
+        ztool -h
+        ztool list
+        ztool CombineTables -h
+        ''',
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command",help="command")
     
     args = parser.parse_args()
