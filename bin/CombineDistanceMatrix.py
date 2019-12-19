@@ -1,6 +1,21 @@
 #!/usr/bin/env python
 import sys,os
 
+def ArgumentParser():
+    parser = argparse.ArgumentParser(
+        prog="CombineDistanceTables",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description='''
+    Combine distance from distinct files,
+	always follow the scripts SpliceCombine.py
+    ''')
+    parser.add_argument(
+        "--input_file_list","-i",  
+        help='input files list ')
+    parser.add_argument("--out","-o",help="out file name",required=True)
+    args = parser.parse_args()
+    return args
+
 def Readresults(pth,mydis):
 	with open(pth,'r') as f:
 		headers = f.readline().rstrip().split("\t")[1:]
@@ -19,10 +34,11 @@ def Readresults(pth,mydis):
 
 def ReadData(file_name):
     disT = {}
-	for i in open(file_name,'r'):
-    	line = i.rstrip()
-	nm = line.split("/")[-1]
-	disT = Readresults(line,disT)
+	with open(file_name,'r') as fh:
+		for i in fh:
+            line = i.rstrip()
+	        nm = line.split("/")[-1]
+	        disT = Readresults(line,disT)
     return distT
 
 def Output(file_name,data):
@@ -40,9 +56,11 @@ def Output(file_name,data):
 		f.write("\n")
 
 def main():
-    dis_lst, out = sys.argv[1:]
+    args = ArgumentParser()
+	dis_lst = args.input_file_list
+	out = args.out
     data = ReadData(dis_lst)
-	Output(out,data)
+    Output(out,data)
 
 if __name__ == '__main__':
     main()

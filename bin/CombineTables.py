@@ -10,17 +10,20 @@ def ArgumentParser():
         prog="CombineTables",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description='''
-    Combine Tables
-    from position arguments or a file list
+    Combine Tables from position arguments or a file list
+    Position files:
+    python src [file1] [file2] -o out.txt
+    File list:
+    python src -i list.txt -o out.txt
+    where list.txt:
+    Samples\tfile_path
+    or
+    file_path
     ''')
     parser.add_argument("Files",nargs="*",default=[],help="files to be combined")
     parser.add_argument(
         "--input_file_list","-i",  
-        help='''input files list 
-        names1\tfilePath1
-        or 
-        filePath2
-        ''')
+        help='input files list ')
     parser.add_argument("--NumCol","-n",help="which column will be combined")
     parser.add_argument("--out","-o",help="out file name",required=True)
     args = parser.parse_args()
