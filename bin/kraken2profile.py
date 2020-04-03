@@ -37,8 +37,8 @@ def kraken_cat_report(filelist, rank, col, out):
 					fout.write(f"\t{h[key1][key2]}")
 			fout.write("\n")
 
-def Processing(dir, rank, col, out):
-    filelist=input_dir(dir)
+def Processing(filelist, rank, col, out):
+    #filelist=input_dir(dir)
     if rank == "A":
         all_rank = ['U','R','D','K','P','C','O','F','G','S']
         for x in all_rank:
@@ -64,13 +64,28 @@ def input_dir(dir):
 	print ("Checking input file done")	
 	return (path)
 
+def input_list(filename):
+	path = {}
+	with open(filename,'r') as f:
+		for line in f:
+			line = line.rstrip()
+			tmp = line.split("/")[-1].split(".")[0]
+			path[tmp] = line
+	return path
 
-if __name__=='__main__' :
+def main():
 	parser=argparse.ArgumentParser(description="Take multiple kraken output files and consolidate them to one output")
 	parser.add_argument ('-d', dest='directory', help='Enter a directory with kraken summary reports')
+	parser.add_argument ('-l', dest='list', help='Enter a list file with kraken summary reports')
 	parser.add_argument ('-r', dest='rank', choices=['A','U','R','D','K','P','C','O','F','G','S'],default="A", help='Enter a rank code')
 	parser.add_argument ('-c', dest='column', type=int, choices=range(1,7),default=2, help="Enter the column number in the report you would like to include in the output")
 	parser.add_argument ('-o', dest='output', help='Enter the output file name')
 	results=parser.parse_args()
-	#input_dir(results.directory)
-	Processing(results.directory, results.rank, results.column, results.output)
+	if results.directory is not None:
+		filelist = input_dir(results.directory)
+	elif results.list is not None:
+		filelist = input_list(results.list)
+	Processing(filelist, results.rank, results.column, results.output)
+
+if __name__=='__main__':
+    main()

@@ -27,15 +27,8 @@ def ArgumentParser():
         prog="temp",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description="xxx")
-    parser.add_argument(
-        "--input_file","-i",  
-        help='input files')
-    parser.add_argument(
-        "--output_file","-o",  
-        help='output files')
-    parser.add_argument("--xx","-n",type=int,help="xxx")
-    parser.add_argument("--xx","-l",type=int,help="xxx")
-    #parser.add_argument("--xx",action="store_true",default=False,help="xx")
+    parser.add_argument("--xx","-n",help="xxx")
+    parser.add_argument("--xx","-l",help="xxx")
     args = parser.parse_args()
     return args
 
